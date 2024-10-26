@@ -29,11 +29,9 @@ def preprocess_data(data):
         df_new.drop('gender', axis=1, inplace=True)
     
     input_dict = df_new.to_dict(orient='records')[0]
-    
     for key, value in input_dict.items():
         if isinstance(value, pd.Series):
             input_dict[key] = value.iloc[0]
-    print('input_dict', input_dict)
     return pd.DataFrame([input_dict])
 
 def get_prediction(data):
@@ -46,10 +44,10 @@ def get_prediction(data):
     xgb_prediction = xgb_model.predict(preprocessed_data)
     xgb_probability = xgb_model.predict_proba(preprocessed_data)
     
-    X = preprocessed_data.values
+    #X = preprocessed_data.values
     
-    knn_prediction = knn_model.predict(X)
-    knn_probability = knn_model.predict_proba(X)
+    knn_prediction = knn_model.predict(preprocessed_data)
+    knn_probability = knn_model.predict_proba(preprocessed_data)
 
     rf_prediction = random_forest_model.predict(preprocessed_data)
     rf_probability = random_forest_model.predict_proba(preprocessed_data)
@@ -58,7 +56,7 @@ def get_prediction(data):
         'XGBoost': float(xgb_probability[0][1]),
         'Decision Tree': float(dt_probability[0][1]),
         'Random Forest': float(rf_probability[0][1]),
-        'K-nearest Neighbors': float(knn_probability[0][1])
+        #'K-nearest Neighbors': float(knn_probability[0][1])
     }
 
     return probabilities

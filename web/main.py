@@ -27,18 +27,14 @@ def load_score(filename):
 # Load the original data
 
 def load_original_data():
-    #url = 'https://raw.githubusercontent.com/AlexandraZavala/ChurnCustModels/main/web/churn.csv'
+    url = 'https://raw.githubusercontent.com/AlexandraZavala/Fraud_Detection/main/web/fraudTest.csv'
     
-    #response = requests.get(url)
-    #if response.status_code == 200:
-    #    return pd.read_csv(StringIO(response.text))
-    #else:
-    #    st.error("Failed to load data from GitHub.")
-    #
-
-    df = pd.read_csv('fraudTrain.csv')
-
-    return df
+    response = requests.get(url)
+    if response.status_code == 200:
+        return pd.read_csv(StringIO(response.text))
+    else:
+        st.error("Failed to load data from GitHub.")
+        return None
 
 def prepare_input(customer):
   
@@ -46,32 +42,32 @@ def prepare_input(customer):
   age = current_date.year - customer['dob'].year - ((current_date.month, current_date.day) < (customer['dob'].month, customer['dob'].day))
   input_df = {
     "category": customer['category'],
+    "age": age,
     "amt": customer['amt'],
     "city": customer['city'],
+    "city_pop": customer['city_pop'],
     "state": customer['state'],
     "job": customer['job'],
-    "gender_F": 1 if customer['gender'] == 'F' else 0,
-    "gender_M": 1 if customer['gender'] == 'M' else 0,
-    "age": age,
-    "city_pop": customer['city_pop'],
-    "AmtAgeRatio": customer['amt'] / age,
+    "gender": customer['gender'],
   }
   return input_df
 
 def make_predictions(input_df):
   #call the api
-  url ="https://churncustmodels-1.onrender.com"
+  url ="https://fraud-detection-62up.onrender.com"
   #url = "https://localhost:8000"
 
 
   response = requests.post(f"{url}/predict", json=input_df)
+  print(response)
   if response.status_code == 200:
     result = response.json()
+    probabilities = result['probabilities']
+    avg_probability=np.mean(list(probabilities.values()))
   else:
     print("Error:", response.status_code, response.text)
   
-  probabilities = result['probabilities']
-  avg_probability=np.mean(list(probabilities.values()))
+  
 
   col1,col2=st.columns(2)
   with col1:
@@ -83,16 +79,7 @@ def make_predictions(input_df):
     fig_probs = ut.create_model_probability_chart(probabilities)
     st.plotly_chart(fig_probs, use_container_width=True)
   
-  #customer percentiles chart
-  metrics = ['amt', 'age', 'city_pop']
-  
-  percentiles = {}
-  for metric in metrics:
-    # Calcular el percentil del cliente seleccionado con respecto a los demás en esa métrica
-    percentiles[metric] = percentileofscore(df[metric], selected_customer[metric]) / 100
 
-  fig_percentiles = ut.create_percentiles_chart(percentiles, metrics)
-  st.plotly_chart(fig_percentiles, use_container_width=True)
 
   return avg_probability
 
@@ -102,7 +89,31 @@ def explain_prediction(probability, input_dict, surname):
     You are given a customer with the following characteristics:
     {input_dict}
     The customer has a {probability:.2%} probability of being a fraudster.
-    Please explain why the model made this prediction.
+
+    
+    Here are the machine learning model's top 10 most important features for predicting churn:
+
+    | Feature    | Importance |
+    |------------|------------|
+    | amt        | 0.361559   |
+    | category   | 0.326383   |
+    | gender_F   | 0.124091   |
+    | age        | 0.063777   |
+    | city_pop   | 0.045933   |
+    | job        | 0.028052   |
+    | city       | 0.026335   |
+    | state      | 0.023871   |
+    | gender_M   | 0.000000   |
+
+    Depending of the probability of churning describe:
+    - If the customer has over a 40% risk of churning, generate a 3 sentence explanation of why the transaction is suspicious.
+    - But if the customer has less than a 40% risk of churning, generate a 3 sentence explanation of why the transaction might not be suspicious.
+
+    The explanation should be in third person, not in first person.
+    Don't mention the probability of churning, or the machine learning model, and don't say anything like "Based on the machine learning model's prediction and 10 top most important features", just explain the prediction. Don't mention the importances of the feature.
+    Don't repeat information, just explain the prediction.
+    Explain the prediction in a way that is easy to understand for a non-expert audience.
+    Don't mention transaction ID or related information, just use the surname {surname} of the client of the transaction.
     """
     raw_response = client.chat.completions.create(
         model="llama-3.1-70b-versatile",
@@ -199,15 +210,18 @@ event = st.dataframe(
 )
 
 if event.selection.rows.__len__() > 0:
-    if st.button("Predict"):
     
-        selected_customer_index_table = event.selection.rows[0]
-        
-        selected_customer_index = df_page.index[selected_customer_index_table]
+    
+    selected_customer_index_table = event.selection.rows[0]
+    
+    selected_customer_index = df_page.index[selected_customer_index_table]
 
-        selected_customer = df.iloc[selected_customer_index]
+    selected_customer = df.iloc[selected_customer_index]
 
-        input_df = prepare_input(selected_customer)
+    input_df = prepare_input(selected_customer)
 
-        make_predictions(input_df)
+    probability = make_predictions(input_df)
+
+    explanation = explain_prediction(probability, input_df, selected_customer['first'] + ' ' + selected_customer['last'])
+    st.write(explanation)
 
