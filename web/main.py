@@ -132,7 +132,7 @@ st.divider()
 
 @st.cache_data
 def load_data():
-    return pd.read_csv('fraudTest.csv')
+    return load_original_data()
 
 
 df = load_data()
