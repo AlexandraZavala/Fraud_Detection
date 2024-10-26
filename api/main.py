@@ -40,11 +40,11 @@ def get_prediction(data):
     
     #X = preprocessed_data.values
     
-    knn_prediction = knn_model.predict(preprocessed_data)
-    knn_probability = knn_model.predict_proba(preprocessed_data)
+    #knn_prediction = knn_model.predict(preprocessed_data)
+    #knn_probability = knn_model.predict_proba(preprocessed_data)
 
-    rf_prediction = random_forest_model.predict(preprocessed_data)
-    rf_probability = random_forest_model.predict_proba(preprocessed_data)
+    #rf_prediction = random_forest_model.predict(preprocessed_data)
+    #rf_probability = random_forest_model.predict_proba(preprocessed_data)
     
     probabilities = {
         'XGBoost': float(xgb_probability[0][1]),
