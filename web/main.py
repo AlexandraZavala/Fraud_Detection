@@ -24,8 +24,8 @@ current_date = datetime.now()
 def load_score(filename):
   with open(filename, 'rb') as file:
     return pickle.load(file)
+  
 # Load the original data
-
 def load_original_data():
     url = 'https://raw.githubusercontent.com/AlexandraZavala/Fraud_Detection/main/web/fraudTest.csv'
     
@@ -128,7 +128,6 @@ def explain_prediction(probability, input_dict, surname):
 st.set_page_config(layout="wide")
 st.title("💳 Credit Card Fraud Detection")
 
-#linea
 st.divider()
 
 @st.cache_data
@@ -145,11 +144,10 @@ total_pages = len(df) // items_per_page + (1 if len(df) % items_per_page > 0 els
 if 'page' not in st.session_state:
     st.session_state.page = 1
 
-# Función para cambiar de página
 def change_page(delta):
     st.session_state.page = max(1, min(st.session_state.page + delta, total_pages))
     st.rerun()
-# Interfaz de navegación
+
 col1, col2, col3 = st.columns([1, 3, 1])
 with col1:
     if st.button("⬅️ Previous"):
