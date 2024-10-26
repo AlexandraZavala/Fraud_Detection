@@ -10,12 +10,6 @@ with open('dictionary_of_columns_with_categorical_to_index.pkl', 'rb') as file:
 with open('xgboost-SMOTE.pkl', 'rb') as file:
     xgb_model = pickle.load(file)
 
-with open('kn-SMOTE.pkl', 'rb') as file:
-    knn_model = pickle.load(file)
-
-with open('rf-SMOTE.pkl', 'rb') as file:
-    random_forest_model = pickle.load(file)
-
 with open('dt-SMOTE.pkl', 'rb') as file:
     decision_tree_model = pickle.load(file)
 
@@ -55,7 +49,7 @@ def get_prediction(data):
     probabilities = {
         'XGBoost': float(xgb_probability[0][1]),
         'Decision Tree': float(dt_probability[0][1]),
-        'Random Forest': float(rf_probability[0][1]),
+        #'Random Forest': float(rf_probability[0][1]),
         #'K-nearest Neighbors': float(knn_probability[0][1])
     }
 
