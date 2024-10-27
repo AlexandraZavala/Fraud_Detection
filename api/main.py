@@ -32,8 +32,8 @@ def get_prediction(data):
     preprocessed_data = preprocess_data(data)
     print(preprocessed_data.columns)
 
-    dt_prediction = decision_tree_model.predict(preprocessed_data)
-    dt_probability = decision_tree_model.predict_proba(preprocessed_data)
+    #dt_prediction = decision_tree_model.predict(preprocessed_data)
+    #dt_probability = decision_tree_model.predict_proba(preprocessed_data)
 
     xgb_prediction = xgb_model.predict(preprocessed_data)
     xgb_probability = xgb_model.predict_proba(preprocessed_data)
@@ -48,7 +48,7 @@ def get_prediction(data):
     
     probabilities = {
         'XGBoost': float(xgb_probability[0][1]),
-        'Decision Tree': float(dt_probability[0][1]),
+        #'Decision Tree': float(dt_probability[0][1]),
         #'Random Forest': float(rf_probability[0][1]),
         #'K-nearest Neighbors': float(knn_probability[0][1])
     }
