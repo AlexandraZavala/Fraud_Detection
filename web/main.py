@@ -110,6 +110,7 @@ def explain_prediction(probability, input_dict, surname):
     - But if the customer has less than a 40% risk of churning, generate a 3 sentence explanation of why the transaction might not be suspicious.
 
     The explanation should be in third person, not in first person.
+    Don't give information of the customer, just use the surname {surname} of the client of the transaction.
     Don't mention the probability of churning, or the machine learning model, and don't say anything like "Based on the machine learning model's prediction and 10 top most important features", just explain the prediction. Don't mention the importances of the feature.
     Don't repeat information, just explain the prediction.
     Explain the prediction in a way that is easy to understand for a non-expert audience.
