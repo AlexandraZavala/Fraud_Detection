@@ -84,6 +84,7 @@ def make_predictions(input_df):
   return avg_probability
 
 def explain_prediction(probability, input_dict, surname):
+    print(probability)
     prompt = f"""
     You are an expert in credit card fraud detection.
     You are given a customer with the following characteristics:
@@ -91,7 +92,7 @@ def explain_prediction(probability, input_dict, surname):
     The customer has a {probability:.2%} probability of being a fraudster.
 
     
-    Here are the machine learning model's top 10 most important features for predicting churn:
+    Here are the machine learning model's top 10 most important features for predicting if a transaction is a fraud:
 
     | Feature    | Importance |
     |------------|------------|
@@ -105,9 +106,9 @@ def explain_prediction(probability, input_dict, surname):
     | state      | 0.023871   |
     | gender_M   | 0.000000   |
 
-    Depending of the probability of churning describe:
-    - If the customer has over a 40% risk of churning, generate a 3 sentence explanation of why the transaction is suspicious.
-    - But if the customer has less than a 40% risk of churning, generate a 3 sentence explanation of why the transaction might not be suspicious.
+    Depending of the probability 
+    - If the customer has over a 40% of being a fraud, generate a 3 sentence explanation of why the transaction is suspicious.
+    - But if the customer has less than a 40% of being a fraud, generate a 3 sentence explanation of why the transaction might not be suspicious.
 
     The explanation should be in third person, not in first person.
     Don't give information of the customer, just use the surname {surname} of the client of the transaction.
