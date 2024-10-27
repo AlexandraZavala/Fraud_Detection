@@ -73,7 +73,7 @@ def make_predictions(input_df):
   with col1:
     fig = ut.create_gauge_chart(avg_probability)
     st.plotly_chart(fig, use_container_width=True)
-    st.write(f"The customer has a {avg_probability:.2%} probability of churning")
+    st.write(f"The transaction has a {avg_probability:.2%} probability of being a fraud")
 
   with col2:
     fig_probs = ut.create_model_probability_chart(probabilities)
@@ -221,6 +221,10 @@ if event.selection.rows.__len__() > 0:
     input_df = prepare_input(selected_customer)
 
     probability = make_predictions(input_df)
+
+    st.write("Explanation of the prediction:")
+
+    st.divider()
 
     explanation = explain_prediction(probability, input_df, selected_customer['first'] + ' ' + selected_customer['last'])
     st.write(explanation)
