@@ -1,5 +1,5 @@
 # Fraud Detection
-API deployed on Render: https://churncustmodels-1.onrender.com 
+API deployed on Render: https://fraud-detection-62up.onrender.com/predict
 
 Web app deployed on Streamlit: https://frauddetection-ir5paw9k56egyzatpmqz3n.streamlit.app/ 
 
