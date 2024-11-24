@@ -139,7 +139,7 @@ def load_data():
 
 df = load_data()
 
-items_per_page = 100
+items_per_page = 120
 total_pages = len(df) // items_per_page + (1 if len(df) % items_per_page > 0 else 0)
 
 
