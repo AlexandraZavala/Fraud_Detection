@@ -53,35 +53,33 @@ def prepare_input(customer):
   return input_df
 
 def make_predictions(input_df):
-  #call the api
-  url ="https://fraud-detection-62up.onrender.com"
-  #url = "https://localhost:8000"
+    #call the api
+    url ="https://fraud-detection-62up.onrender.com"
+    #url = "https://localhost:8000"
 
+    try:
+        response = requests.post(f"{url}/predict", json=input_df)
+        response.raise_for_status()  # Lanza un error si la respuesta no es 200
+        result = response.json()
+        probabilities = result['probabilities']
+        avg_probability = np.mean(list(probabilities.values()))
+    except requests.exceptions.RequestException as e:
+        print("Error en la solicitud:", e)
+        avg_probability = 0  # Asignar un valor por defecto en caso de error
 
-  response = requests.post(f"{url}/predict", json=input_df)
-  print(response)
-  if response.status_code == 200:
-    result = response.json()
-    probabilities = result['probabilities']
-    avg_probability=np.mean(list(probabilities.values()))
-  else:
-    print("Error:", response.status_code, response.text)
-  
-  
+    col1,col2=st.columns(2)
+    with col1:
+        fig = ut.create_gauge_chart(avg_probability)
+        st.plotly_chart(fig, use_container_width=True)
+        st.write(f"The transaction has a {avg_probability:.2%} probability of being a fraud")
 
-  col1,col2=st.columns(2)
-  with col1:
-    fig = ut.create_gauge_chart(avg_probability)
-    st.plotly_chart(fig, use_container_width=True)
-    st.write(f"The transaction has a {avg_probability:.2%} probability of being a fraud")
-
-  with col2:
-    fig_probs = ut.create_model_probability_chart(probabilities)
-    st.plotly_chart(fig_probs, use_container_width=True)
+    with col2:
+        fig_probs = ut.create_model_probability_chart(probabilities)
+        st.plotly_chart(fig_probs, use_container_width=True)
   
 
 
-  return avg_probability
+    return avg_probability
 
 def explain_prediction(probability, input_dict, surname):
     print(probability)
