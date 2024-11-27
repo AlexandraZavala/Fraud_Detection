@@ -226,6 +226,8 @@ if event.selection.rows.__len__() > 0:
 
     st.divider()
 
+    st.write("Password: 1464sfs")
+
     explanation = explain_prediction(probability, input_df, selected_customer['first'] + ' ' + selected_customer['last'])
     st.write(explanation)
 
